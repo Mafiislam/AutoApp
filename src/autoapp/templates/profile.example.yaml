@@ -1,0 +1,57 @@
+# Everything the tool may say about you comes from this file. Keep it complete and true.
+name: Your Name
+email: you@example.com
+phone: "+49 000 000000"
+location: Berlin, Germany
+links:
+  - linkedin.com/in/yourname
+headline: PhD researcher in political science and AI governance
+summary: >
+  Two or three plain sentences about who you are professionally.
+
+skills:
+  - Python
+  - R
+  - Survey research
+  - Text analysis
+  - Policy analysis
+  - Academic writing
+languages:
+  - English (fluent)
+  - German (B2)
+
+experience:            # newest first
+  - title: Doctoral Researcher
+    company: Example University
+    location: Berlin
+    start: "2022"
+    end: present
+    bullets:
+      - Built a text analysis pipeline for 40,000 parliamentary speeches in Python
+      - Taught a seminar on AI and public policy to 30 master students
+
+education:
+  - degree: MA Political Science
+    institution: Example University
+    start: "2019"
+    end: "2021"
+    details:
+      - Thesis on algorithmic decision making in public administration
+
+interests:
+  - AI governance
+  - digital policy
+  - research ethics
+
+extra_sections:
+  Publications:
+    - "Surname, N. (2024). Title of paper. Journal Name."
+
+search:
+  keywords: ["research associate", "policy analyst", "AI governance"]
+  locations: ["Berlin", "Hamburg"]
+  countries: ["de"]          # Adzuna country codes: de, gb, us, nl, at, fr ...
+  max_age_days: 7
+  remote_ok: true
+  min_score: 45
+  exclude_keywords: ["intern", "internship", "praktikum"]

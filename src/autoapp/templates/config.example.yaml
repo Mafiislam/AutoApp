@@ -1,0 +1,14 @@
+llm:
+  model: claude-opus-5-5
+  effort: medium       # low, medium, high. Higher costs more and thinks longer.
+  web_search: true     # Claude can search the web while researching a company
+sources:
+  adzuna:
+    enabled: true      # free key: https://developer.adzuna.com  (ADZUNA_APP_ID, ADZUNA_APP_KEY)
+  jooble:
+    enabled: false     # free key on request (JOOBLE_API_KEY)
+  arbeitnow:
+    enabled: true      # no key needed
+output_dir: applications
+db_path: data/autoapp.db
+max_applications_per_run: 5
