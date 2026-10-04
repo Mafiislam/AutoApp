@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autoapp"
+version = "0.1.0"
+description = "Finds recent jobs that fit your profile and prepares a researched, tailored application package for each."
+requires-python = ">=3.10"
+dependencies = [
+  "anthropic>=1.0",
+  "pydantic>=2",
+  "PyYAML",
+  "requests",
+  "beautifulsoup4",
+  "python-docx",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+autoapp = "autoapp.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+autoapp = ["templates/*.yaml"]
