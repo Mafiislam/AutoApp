@@ -1,5 +1,7 @@
 # AutoApp
 
+**New here? Read the [beginner guide](docs/GUIDE.md).** It covers installation, keys, your profile, and your first application package step by step.
+
 AutoApp finds recent jobs that fit your profile. For each good match it researches the company, checks the advert against your background, and writes a tailored CV and cover letter. Everything is saved in one folder per job, ready for you to review and send.
 
 It does **not** submit applications. You read, edit and send them yourself. That is deliberate: employers can tell, and the final check is yours.
@@ -59,11 +61,13 @@ autoapp list                      # what has been processed
 
 ## Settings
 
-`config.yaml` sets the model (`claude-opus-5-5` by default), effort, web search on or off, output folder and the per run limit. API keys are read from environment variables only.
+`config.yaml` sets the model provider, effort, web search on or off, output folder and the per run limit. API keys are read from environment variables only.
+
+**Free models.** Claude is the default and gives the best results. You can run the tool for free with Llama on your own computer (Ollama) or on Groq's free plan. See section 4A of the [beginner guide](docs/GUIDE.md). Grok has no standing free API plan.
 
 ## Cost and limits
 
-A package takes roughly four model calls, plus web searches for the research step. Use `autoapp search` first, then `--limit` to control spend. Lowering `effort` to `low` cuts cost further.
+A package takes roughly four model calls. With Claude, the research step also uses web searches. Use `autoapp search` first, then `--limit` to control spend. Lowering `effort` to `low` cuts cost further.
 
 ## Development
 

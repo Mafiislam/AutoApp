@@ -8,10 +8,15 @@ from pydantic import BaseModel, Field
 
 
 class LLMSettings(BaseModel):
-    model: str = "claude-opus-5-5"
-    effort: str = "medium"
-    web_search: bool = True  # lets Claude search the web while researching a company
+    # anthropic | ollama | groq | openrouter | gemini | xai | openai_compatible
+    provider: str = "anthropic"
+    model: str = ""          # empty means the provider's default model
+    effort: str = "medium"   # Claude only
+    web_search: bool = True  # Claude only: lets the model search the web while researching a company
     max_tokens: int = 8000
+    base_url: str = ""       # only needed for openai_compatible, or to override a preset
+    api_key_env: str = ""    # name of the environment variable that holds the key
+    num_ctx: int = 16384     # Ollama only: context window in tokens
 
 
 class AdzunaSettings(BaseModel):
