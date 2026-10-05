@@ -1,5 +1,7 @@
 # AutoApp
 
+**New here? Read the [beginner guide](docs/GUIDE.md).** It covers installation, keys, your profile, and your first application package step by step.
+
 AutoApp finds recent jobs that fit your profile. For each good match it researches the company, checks the advert against your background, and writes a tailored CV and cover letter. Everything is saved in one folder per job, ready for you to review and send.
 
 It does **not** submit applications. You read, edit and send them yourself. That is deliberate: employers can tell, and the final check is yours.
