@@ -1,6 +1,6 @@
 # AutoApp beginner guide
 
-This guide takes you from nothing to your first finished job application package. You do not need to know how to code. Follow the steps in order. Each step says what to type and what you should see.
+The guide takes you from nothing to your first finished job application package. You do not need to know how to code. Follow the steps in order. Each step says what to type and what you should see.
 
 ## Contents
 
@@ -154,7 +154,7 @@ echo $ADZUNA_APP_ID
 ```
 It should print your App ID.
 
-These settings last only until you close the terminal. To keep them:
+Your keys last only until you close the terminal. To keep them:
 
 - **Mac:** type `open -e ~/.zshrc`, paste the three `export` lines at the end, save, then run `source ~/.zshrc`.
 - **Windows:** use `setx ANTHROPIC_API_KEY "sk-ant-your-key-here"` for each key, then open a new PowerShell window.
@@ -171,7 +171,7 @@ Make sure you are in the project folder, then run:
 autoapp init
 ```
 
-This creates two files in the folder: `profile.yaml` (about you) and `config.yaml` (program settings).
+The command creates two files in the folder: `profile.yaml` (about you) and `config.yaml` (program settings).
 
 ### 5.2 Open your profile
 
@@ -232,7 +232,7 @@ experience:
 
 ### 5.4 The search block
 
-This block tells AutoApp which jobs to look for.
+The search block tells AutoApp which jobs to look for.
 
 ```yaml
 search:
@@ -267,7 +267,7 @@ Save the file when you are done.
 autoapp search
 ```
 
-This is free. It does not use the Anthropic key. You will see a list like this:
+The search is free. It does not use the Anthropic key. You will see a list like this:
 
 ```
 Found 87 jobs, 87 not seen before, 12 with score >= 25.
@@ -293,7 +293,7 @@ Start with one job, so you can check the quality and the cost:
 autoapp run --limit 1
 ```
 
-This takes one to three minutes. You will see steps appear: researching the company, comparing the advert and your profile, tailoring the CV, writing the cover letter, and the folder where it saved the result.
+The run takes one to three minutes. You will see steps appear: researching the company, comparing the advert and your profile, tailoring the CV, writing the cover letter, and the folder where it saved the result.
 
 AutoApp may skip a job when the fit is poor and tell you why. To make a package anyway, use `apply-url` or `apply-file` with `--force` (Section 9).
 
@@ -339,7 +339,7 @@ If the `README.md` lists writing problems, fix them by hand. They are usually sm
 
 ## 9. Jobs from LinkedIn, Indeed and StepStone
 
-These sites do not allow automated search. AutoApp does not scrape them and does not use your login. You can still use them like this.
+Those sites do not allow automated search. AutoApp does not scrape them and does not use your login. You can still use them in three ways.
 
 **Option A. Paste the link.** Open a job in your browser. Copy the address. Run:
 
