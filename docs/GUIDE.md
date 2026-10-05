@@ -8,6 +8,7 @@ The guide takes you from nothing to your first finished job application package.
 2. What you need before you start
 3. Install AutoApp
 4. Get your keys
+   - 4A. Free option: use Llama instead of Claude
 5. Set up your profile
 6. Find jobs
 7. Make your first application package
@@ -42,7 +43,7 @@ AutoApp also does not log in to LinkedIn, Indeed or StepStone. Their rules do no
 | A Mac, Windows or Linux computer | You have it | Free |
 | Python 3.10 or newer | python.org/downloads | Free |
 | Git | git-scm.com/downloads | Free |
-| An Anthropic API key | console.anthropic.com | Pay as you go |
+| An Anthropic API key, or a free model (Section 4A) | console.anthropic.com | Pay as you go, or free |
 | An Adzuna key (recommended) | developer.adzuna.com | Free |
 
 To check Python, open a terminal and type:
@@ -158,6 +159,98 @@ Your keys last only until you close the terminal. To keep them:
 
 - **Mac:** type `open -e ~/.zshrc`, paste the three `export` lines at the end, save, then run `source ~/.zshrc`.
 - **Windows:** use `setx ANTHROPIC_API_KEY "sk-ant-your-key-here"` for each key, then open a new PowerShell window.
+
+## 4A. Free option: use Llama instead of Claude
+
+AutoApp works best with Claude. You can also run it with Llama, and then you pay nothing for the model. Grok is different, and the table explains why.
+
+| Option | Cost | Quality | Good to know |
+|---|---|---|---|
+| Claude (default) | A few cents per package | Best | Searches the web for company research |
+| Llama on your own computer (Ollama) | Free, no limits | Fair to good, depends on model size | Private. Needs a modern computer. Slow on laptops |
+| Llama on Groq | Free plan with limits, no card needed | Good (70B model) | Needs internet. Waits when you reach the limits |
+| Grok (xAI) | Not free | Good | xAI has no standing free plan. It gives promotional credits that change from time to time. Check console.x.ai |
+
+### What you give up with a free model
+
+- **No web search.** The research file uses only the advert, the company website (when the advert links to it) and Wikipedia. It will say "not found" more often. Search the company yourself for two minutes and add what matters.
+- **More mistakes.** Smaller models invent details or write longer sentences more often. AutoApp still runs its writing check and its number check, but you must read every line with more care.
+- **Slower runs.** A package can take several minutes.
+
+Start with `--limit 1` and compare the result with the style you want.
+
+### Option 1. Llama on Groq (easiest free route)
+
+1. Go to console.groq.com and create a free account. No card is needed.
+2. Open API Keys and create a key.
+3. Set the key on one line:
+
+   Mac and Linux: `export GROQ_API_KEY=your-groq-key`
+
+   Windows PowerShell: `$env:GROQ_API_KEY="your-groq-key"`
+
+4. Open `config.yaml` and change the first lines to:
+
+```yaml
+llm:
+  provider: groq
+```
+
+5. Run `autoapp run --limit 1`.
+
+You do not need an Anthropic key for this.
+
+Groq limits how much text you can send each minute and each day. At the time of writing, the free plan for the Llama 3.3 70B model allowed about 12,000 tokens per minute and 1,000 requests per day. Check your own limits at console.groq.com/settings/limits, because they change. When you reach the limit, AutoApp prints `provider is busy or rate limited, waiting ...` and continues by itself. That message is normal. Do not close the window.
+
+### Option 2. Llama on your own computer (Ollama)
+
+Nothing leaves your computer. There are no limits and no costs.
+
+1. Install Ollama from ollama.com/download (Mac, Windows and Linux).
+2. Start it. On Mac and Windows, open the Ollama app. On Linux, run `ollama serve` in a second terminal.
+3. Download a model. This takes a few minutes and several gigabytes:
+
+```bash
+ollama pull llama3.1:8b
+```
+
+4. Open `config.yaml` and change the first lines to:
+
+```yaml
+llm:
+  provider: ollama
+  model: llama3.1:8b
+  num_ctx: 16384
+```
+
+5. Run `autoapp run --limit 1`.
+
+As a rough guide, the 8B model wants about 16 GB of memory. Bigger models write better but need much more, for example about 40 GB or more for a 70B model. If your computer slows down or the run fails with a memory error, lower `num_ctx` to `8192`. Do not go below that, or the model will not see your whole profile.
+
+Ollama starts with a small reading window by default, so AutoApp sets `num_ctx` for you on every request.
+
+### Grok
+
+Grok has no free plan for the API. If you already hold xAI credits, set:
+
+```yaml
+llm:
+  provider: xai
+  model: the-model-name-from-console.x.ai
+```
+
+Set `XAI_API_KEY` as in Section 4.3. Model names change often, so copy the name from your xAI console.
+
+### Other free options
+
+- **Google Gemini:** create a key at aistudio.google.com, set `GEMINI_API_KEY`, and use `provider: gemini`.
+- **OpenRouter:** create a key at openrouter.ai, set `OPENROUTER_API_KEY`, and use `provider: openrouter`. Some models there are free. Their names end in `:free`.
+
+Free plans change often. Read the provider's current limits before you rely on them.
+
+### Switching back to Claude
+
+Set `provider: anthropic` in `config.yaml`, or delete the `provider` line.
 
 ## 5. Set up your profile
 
@@ -421,13 +514,13 @@ max_applications_per_run: 5
 ## 12. Costs and privacy
 
 **Costs.**
-- `autoapp search` is free.
+- `autoapp search` is free. With a free model (Section 4A) the whole tool is free.
 - Each package makes about four calls to the Anthropic API, plus web searches for research. The cost is usually well under one dollar per package. It depends on the effort setting and the advert length.
 - Check your spending any time at console.anthropic.com under Usage.
 - Start with `--limit 1` or `--limit 3` until you know your typical cost.
 
 **Privacy.**
-- Your profile and the job text are sent to Anthropic to produce the research and the documents. Read Anthropic's privacy terms if you are unsure.
+- Your profile and the job text are sent to the model provider (Anthropic, Groq or another service) to produce the research and the documents. Read the provider's privacy terms if you are unsure. With Ollama, nothing leaves your computer.
 - Your keys and profile stay on your computer. They are not uploaded to GitHub, because the project ignores those files.
 - Do not put anything in your profile that you would not put on a CV, such as passport numbers.
 - Never share your keys. If you think a key leaked, delete it on the provider's site and create a new one.
@@ -450,6 +543,12 @@ max_applications_per_run: 5
 | `0 with score >= 45` | Threshold too high | Set `min_score` to 25 in `profile.yaml`. |
 | `authentication_error` or `invalid x-api-key` | Anthropic key missing or wrong | Set `ANTHROPIC_API_KEY` again, on one line. |
 | `credit balance is too low` | No credit on your Anthropic account | Add credit at console.anthropic.com. |
+| `Ollama is not running` | The Ollama app is off | Open the Ollama app, or run `ollama serve`, then try again. |
+| `Model 'llama3.1:8b' is not installed` | The model was not downloaded | Run `ollama pull llama3.1:8b`. |
+| `groq rejected the API key` | Key missing, wrong, or on two lines | Set `GROQ_API_KEY` again on one line. |
+| `provider is busy or rate limited, waiting` | A free plan limit was reached | Wait. AutoApp continues by itself. |
+| `does not know the model` | Wrong model name in `config.yaml` | Copy the exact name from the provider's model list. |
+| `no JSON object in model output` | A small model did not follow the format | Run the job again, or use a larger model. |
 | `The page could not be read` | The job page needs a login or blocks robots | Use `apply-file` with the pasted advert. |
 | A YAML error when starting | A spacing or quote mistake in `profile.yaml` | Compare your indents with the example. Put quotes around text that has a colon. |
 | Keys are gone after a restart | `export` lasts for one terminal only | Save them in `~/.zshrc` (Section 4.3). |

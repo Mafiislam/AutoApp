@@ -60,7 +60,11 @@ Return JSON with these keys:
 - "cautions": anything an applicant should check (unclear employer, contract type, language needs, red flags)
 - "contact": hiring contact name and title if the advert names one, else ""
 - "sources": list of URLs you relied on"""
-    return llm.json(RESEARCH_SYSTEM, user, web_search=True)
+    system = RESEARCH_SYSTEM
+    if not getattr(llm, "can_search", False):
+        system += ("\nYou have no web access. Use only the text supplied below and the advert. "
+                   'Write "not found" for everything else. Never rely on memory for facts about the company.')
+    return llm.json(system, user, web_search=True)
 
 
 def research_markdown(job: Job, r: dict) -> str:

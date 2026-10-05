@@ -20,8 +20,8 @@ def _load(args):
 
 
 def _llm(settings):
-    from .llm import ClaudeLLM
-    return ClaudeLLM(settings.llm)
+    from .llm import make_llm
+    return make_llm(settings.llm)
 
 
 def cmd_init(args):

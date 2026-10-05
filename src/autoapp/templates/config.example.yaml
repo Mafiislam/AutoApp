@@ -1,7 +1,14 @@
 llm:
-  model: claude-opus-5-5
-  effort: medium       # low, medium, high. Higher costs more and thinks longer.
-  web_search: true     # Claude can search the web while researching a company
+  # Which AI model writes your documents. Choose one provider:
+  #   anthropic   Claude. Best quality, web search for company research. Costs a little per package.
+  #   ollama      Llama on your own computer. Free and private. Needs a fairly modern computer.
+  #   groq        Llama on Groq's servers. Free tier with limits, no card needed.
+  #   openrouter  Many models, some free. gemini: Google's free tier. xai: Grok (paid, no standing free tier).
+  provider: anthropic
+  model: ""            # empty = a sensible default for the provider. Set it to use a different model.
+  effort: medium       # Claude only: low, medium, high
+  web_search: true     # Claude only: lets the model search the web for company research
+  num_ctx: 16384       # Ollama only: how much text the model can read at once
 sources:
   adzuna:
     enabled: true      # free key: https://developer.adzuna.com  (ADZUNA_APP_ID, ADZUNA_APP_KEY)

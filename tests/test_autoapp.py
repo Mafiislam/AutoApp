@@ -105,3 +105,97 @@ def test_end_to_end(tmp_path, monkeypatch):
     assert "Invented Skill" not in text and "—" not in text
     assert "Doctoral Researcher, Example University" in text
     assert store.known(job().id)
+
+
+# ---- model providers -------------------------------------------------------
+import pytest
+import requests as _requests
+
+from autoapp.config import LLMSettings
+from autoapp.llm import OllamaLLM, OpenAICompatLLM, extract_json, make_llm
+
+
+class FakeResp:
+    def __init__(self, status=200, body=None, headers=None, text=""):
+        self.status_code, self._body, self.headers, self.text = status, body or {}, headers or {}, text
+        self.ok = status < 400
+
+    def json(self):
+        return self._body
+
+
+def chat(content):
+    return {"choices": [{"message": {"content": content}}]}
+
+
+def test_extract_json_from_fenced_text():
+    assert extract_json('Sure!\n```json\n{"a": 1}\n```') == {"a": 1}
+
+
+def test_make_llm_presets(monkeypatch):
+    monkeypatch.setenv("GROQ_API_KEY", "k")
+    g = make_llm(LLMSettings(provider="groq"))
+    assert isinstance(g, OpenAICompatLLM) and g.s.model == "llama-3.3-70b-versatile" and not g.can_search
+    assert isinstance(make_llm(LLMSettings(provider="ollama")), OllamaLLM)
+
+
+def test_make_llm_errors(monkeypatch):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="GROQ_API_KEY"):
+        make_llm(LLMSettings(provider="groq"))
+    with pytest.raises(RuntimeError, match="llm.model"):
+        make_llm(LLMSettings(provider="xai"))
+    with pytest.raises(RuntimeError, match="Unknown"):
+        make_llm(LLMSettings(provider="nope"))
+
+
+def test_openai_compat_retries_rate_limit_and_drops_response_format(monkeypatch):
+    calls = []
+    answers = [FakeResp(429, headers={"retry-after": "1"}), FakeResp(400),
+               FakeResp(200, chat('{"ok": true}'))]
+
+    def fake_post(url, json=None, headers=None, timeout=None):
+        calls.append(dict(json))
+        return answers.pop(0)
+
+    monkeypatch.setattr("autoapp.llm.requests.post", fake_post)
+    monkeypatch.setattr("autoapp.llm.time.sleep", lambda s: None)
+    monkeypatch.setenv("GROQ_API_KEY", "k")
+    out = make_llm(LLMSettings(provider="groq")).json("sys", "user")
+    assert out == {"ok": True}
+    assert "response_format" in calls[0] and "response_format" not in calls[-1]
+
+
+def test_ollama_sets_context_and_explains_missing_server(monkeypatch):
+    seen = {}
+
+    def fake_post(url, json=None, timeout=None):
+        seen.update(json)
+        return FakeResp(200, {"message": {"content": '{"x": 1}'}})
+
+    monkeypatch.setattr("autoapp.llm.requests.post", fake_post)
+    assert make_llm(LLMSettings(provider="ollama", num_ctx=12000)).json("s", "u") == {"x": 1}
+    assert seen["options"]["num_ctx"] == 12000 and seen["format"] == "json"
+
+    def refuse(*a, **k):
+        raise _requests.ConnectionError()
+
+    monkeypatch.setattr("autoapp.llm.requests.post", refuse)
+    with pytest.raises(RuntimeError, match="Ollama is not running"):
+        make_llm(LLMSettings(provider="ollama")).text("s", "u")
+
+
+def test_research_prompt_tells_models_without_search_not_to_guess():
+    from autoapp.research import research_company
+
+    seen = {}
+
+    class L:
+        can_search = False
+
+        def json(self, system, user, *, web_search=False):
+            seen["system"] = system
+            return {}
+
+    research_company(L(), Job(source="t", title="x", company="", description="d"))
+    assert "no web access" in seen["system"]
